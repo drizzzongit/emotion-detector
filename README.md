@@ -1,4 +1,4 @@
-# Emotion Detector — IBM Final Project
+# Final Project: Emotion Detector
 
 A Flask web app that detects emotions (anger, disgust, fear, joy, sadness) in
 text and reports the dominant emotion, using the Watson NLP `EmotionPredict`
@@ -24,7 +24,7 @@ or tokens are stored in this repository.
 python3 server.py        # then open http://localhost:5000
 ```
 Blank input, or an input the service rejects with HTTP 400, shows
-`Invalid text! Please try again!`.
+`Invalid input! Try again.`.
 
 ## Test and lint
 ```

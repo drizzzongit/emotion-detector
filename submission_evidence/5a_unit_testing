@@ -78,11 +78,16 @@ class TestEmotionDetector(unittest.TestCase):
         self.assertEqual(mock_post.call_args.kwargs["json"],
                          {"raw_document": {"text": "hello"}})
 
-    def test_status_400_returns_none(self):
-        """HTTP 400 yields None."""
+    def test_status_400_returns_none_values(self):
+        """HTTP 400 yields a dictionary whose values are all None."""
         with patch("EmotionDetection.emotion_detection.requests.post",
                    return_value=fake_response(400)):
-            self.assertIsNone(emotion_detector(""))
+            result = emotion_detector("")
+        self.assertEqual(
+            result,
+            {"anger": None, "disgust": None, "fear": None, "joy": None,
+             "sadness": None, "dominant_emotion": None},
+        )
 
     def test_server_error_is_not_swallowed(self):
         """HTTP 500 raises instead of being parsed as a prediction."""

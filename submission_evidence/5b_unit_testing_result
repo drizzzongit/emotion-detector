@@ -9,8 +9,8 @@ test_request_payload (test_emotion_detection.TestEmotionDetector.test_request_pa
 The text is sent in the documented raw_document payload. ... ok
 test_server_error_is_not_swallowed (test_emotion_detection.TestEmotionDetector.test_server_error_is_not_swallowed)
 HTTP 500 raises instead of being parsed as a prediction. ... ok
-test_status_400_returns_none (test_emotion_detection.TestEmotionDetector.test_status_400_returns_none)
-HTTP 400 yields None. ... ok
+test_status_400_returns_none_values (test_emotion_detection.TestEmotionDetector.test_status_400_returns_none_values)
+HTTP 400 yields a dictionary whose values are all None. ... ok
 
 ----------------------------------------------------------------------
 Ran 6 tests in 0.005s

@@ -1,11 +1,11 @@
-# Submission answers
+# Submission answers (revision 2)
 
-> **Disclosures.** (a) Question numbering is inferred from the task order in the master prompt (Q1 README, Q6 `__init__.py`, Q11/Q14 screenshots); confirm against the live Coursera form. (b) The Watson endpoint is blocked from this sandbox, so outputs for Q3, Q5, Q7 and both screenshots were produced by running the real code against a **local stand-in service** following the Watson contract, not the real Watson service. Re-run them on the IBM lab environment if your grader expects real service scores. (c) Unit tests mock the HTTP layer.
+> Outputs for Q5, Q7 and the screenshots come from a local stand-in for Watson (the real service is blocked in this sandbox). Q3 must be redone in the IBM lab.
 
 
 ## Question 1 — README.md public URL
 
-**PENDING — repo not yet published.** Expected form once pushed: `https://github.com/drizzzongit/emotion-detector/blob/main/README.md` (UNVERIFIED; do not submit until it resolves).
+**PENDING** — needs a repo named exactly `oaqjp-final-project-emb-ai`. Then: `https://github.com/drizzzongit/oaqjp-final-project-emb-ai/blob/main/README.md`
 
 ## Question 2 — emotion_detection.py (Task 2)
 
@@ -23,11 +23,7 @@ def emotion_detector(text_to_analyse):
 
 ## Question 3 — Application creation test output
 
-```
-$ python3 -c "from emotion_detection import emotion_detector; print(emotion_detector(\"I love my life\"))"
-{"emotionPredictions": [{"emotion": {"anger": 0.02, "disgust": 0.02, "fear": 0.02, "joy": 0.9, "sadness": 0.02}}]}
-```
-
+**REDO IN THE IBM LAB**: show `cd /home/project/final_project`, `python3`, the import line, and the call, with real Watson output.
 
 ## Question 4 — Formatted emotion_detector (Task 3)
 
@@ -59,17 +55,15 @@ $ python3 -c "from emotion_detection import emotion_detector; print(emotion_dete
 
 ## Question 6 — EmotionDetection/__init__.py public URL
 
-**PENDING.** Expected form: `https://github.com/drizzzongit/emotion-detector/blob/main/EmotionDetection/__init__.py` (UNVERIFIED).
+`https://github.com/drizzzongit/oaqjp-final-project-emb-ai/blob/main/EmotionDetection/__init__.py` (after the new repo is pushed)
 
-## Question 7 — Packaging test output
+## Question 7 — Packaging test output (shows anger)
 
 ```
 $ python3
->>> from EmotionDetection.emotion_detection import emotion_detector
->>> from EmotionDetection import emotion_detector as pkg_detector
->>> pkg_detector is emotion_detector
-True
-{'anger': 0.02, 'disgust': 0.02, 'fear': 0.02, 'joy': 0.9, 'sadness': 0.02, 'dominant_emotion': 'joy'}
+>>> from EmotionDetection import emotion_detector
+>>> emotion_detector("I am really mad about this")
+{'anger': 0.9, 'disgust': 0.02, 'fear': 0.02, 'joy': 0.02, 'sadness': 0.02, 'dominant_emotion': 'anger'}
 ```
 
 
@@ -156,11 +150,16 @@ class TestEmotionDetector(unittest.TestCase):
         self.assertEqual(mock_post.call_args.kwargs["json"],
                          {"raw_document": {"text": "hello"}})
 
-    def test_status_400_returns_none(self):
-        """HTTP 400 yields None."""
+    def test_status_400_returns_none_values(self):
+        """HTTP 400 yields a dictionary whose values are all None."""
         with patch("EmotionDetection.emotion_detection.requests.post",
                    return_value=fake_response(400)):
-            self.assertIsNone(emotion_detector(""))
+            result = emotion_detector("")
+        self.assertEqual(
+            result,
+            {"anger": None, "disgust": None, "fear": None, "joy": None,
+             "sadness": None, "dominant_emotion": None},
+        )
 
     def test_server_error_is_not_swallowed(self):
         """HTTP 500 raises instead of being parsed as a prediction."""
@@ -196,8 +195,8 @@ test_request_payload (test_emotion_detection.TestEmotionDetector.test_request_pa
 The text is sent in the documented raw_document payload. ... ok
 test_server_error_is_not_swallowed (test_emotion_detection.TestEmotionDetector.test_server_error_is_not_swallowed)
 HTTP 500 raises instead of being parsed as a prediction. ... ok
-test_status_400_returns_none (test_emotion_detection.TestEmotionDetector.test_status_400_returns_none)
-HTTP 400 yields None. ... ok
+test_status_400_returns_none_values (test_emotion_detection.TestEmotionDetector.test_status_400_returns_none_values)
+HTTP 400 yields a dictionary whose values are all None. ... ok
 
 ----------------------------------------------------------------------
 Ran 6 tests in 0.005s
@@ -244,7 +243,7 @@ if __name__ == "__main__":
 
 ## Question 11 — Deployment screenshot
 
-Upload `submission_evidence/6b_deployment_test.png`.
+Upload `6b_deployment_test.png`.
 
 ## Question 12 — Error-handling emotion_detector (Task 7a)
 
@@ -270,7 +269,8 @@ TIMEOUT_SECONDS = 30
 def emotion_detector(text_to_analyze):
     """Return the five emotion scores and the dominant emotion for a text.
 
-    Returns None when the service rejects the input with HTTP 400.
+    When the service rejects the input with HTTP 400, every score and the
+    dominant emotion are returned as None.
     """
     payload = {"raw_document": {"text": text_to_analyze}}
     response = requests.post(
@@ -278,7 +278,9 @@ def emotion_detector(text_to_analyze):
     )
 
     if response.status_code == 400:
-        return None
+        result = dict.fromkeys(EMOTIONS)
+        result["dominant_emotion"] = None
+        return result
     response.raise_for_status()
 
     scores = json.loads(response.text)["emotionPredictions"][0]["emotion"]
@@ -298,7 +300,7 @@ from EmotionDetection import emotion_detector
 
 app = Flask("Emotion Detector")
 
-INVALID_TEXT_MESSAGE = "Invalid text! Please try again!"
+INVALID_TEXT_MESSAGE = "Invalid input! Try again."
 
 
 @app.route("/emotionDetector")
@@ -309,7 +311,7 @@ def emotion_detection_route():
         return INVALID_TEXT_MESSAGE
 
     result = emotion_detector(text_to_analyze)
-    if result is None or result["dominant_emotion"] is None:
+    if result["dominant_emotion"] is None:
         return INVALID_TEXT_MESSAGE
 
     return (
@@ -334,7 +336,7 @@ if __name__ == "__main__":
 
 ## Question 14 — Error-handling interface screenshot
 
-Upload `submission_evidence/7c_error_handling_interface.png`.
+Upload `7c_error_handling_interface.png` (shows `Invalid input! Try again.`).
 
 ## Question 15 — Modified server.py for static analysis
 
@@ -346,7 +348,7 @@ from EmotionDetection import emotion_detector
 
 app = Flask("Emotion Detector")
 
-INVALID_TEXT_MESSAGE = "Invalid text! Please try again!"
+INVALID_TEXT_MESSAGE = "Invalid input! Try again."
 
 
 @app.route("/emotionDetector")
@@ -357,7 +359,7 @@ def emotion_detection_route():
         return INVALID_TEXT_MESSAGE
 
     result = emotion_detector(text_to_analyze)
-    if result is None or result["dominant_emotion"] is None:
+    if result["dominant_emotion"] is None:
         return INVALID_TEXT_MESSAGE
 
     return (

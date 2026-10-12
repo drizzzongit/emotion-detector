@@ -5,7 +5,7 @@ from EmotionDetection import emotion_detector
 
 app = Flask("Emotion Detector")
 
-INVALID_TEXT_MESSAGE = "Invalid text! Please try again!"
+INVALID_TEXT_MESSAGE = "Invalid input! Try again."
 
 
 @app.route("/emotionDetector")
@@ -16,7 +16,7 @@ def emotion_detection_route():
         return INVALID_TEXT_MESSAGE
 
     result = emotion_detector(text_to_analyze)
-    if result is None or result["dominant_emotion"] is None:
+    if result["dominant_emotion"] is None:
         return INVALID_TEXT_MESSAGE
 
     return (

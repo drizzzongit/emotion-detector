@@ -19,7 +19,8 @@ TIMEOUT_SECONDS = 30
 def emotion_detector(text_to_analyze):
     """Return the five emotion scores and the dominant emotion for a text.
 
-    Returns None when the service rejects the input with HTTP 400.
+    When the service rejects the input with HTTP 400, every score and the
+    dominant emotion are returned as None.
     """
     payload = {"raw_document": {"text": text_to_analyze}}
     response = requests.post(
@@ -27,7 +28,9 @@ def emotion_detector(text_to_analyze):
     )
 
     if response.status_code == 400:
-        return None
+        result = dict.fromkeys(EMOTIONS)
+        result["dominant_emotion"] = None
+        return result
     response.raise_for_status()
 
     scores = json.loads(response.text)["emotionPredictions"][0]["emotion"]
