@@ -1,0 +1,2 @@
+$ python3 -c "from emotion_detection import emotion_detector; print(emotion_detector(\"I love my life\"))"
+{"emotionPredictions": [{"emotion": {"anger": 0.02, "disgust": 0.02, "fear": 0.02, "joy": 0.9, "sadness": 0.02}}]}

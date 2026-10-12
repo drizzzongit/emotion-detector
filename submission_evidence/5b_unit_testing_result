@@ -1,0 +1,18 @@
+$ python3 -m unittest test_emotion_detection -v
+test_dominant_emotion_for_course_inputs (test_emotion_detection.TestEmotionDetector.test_dominant_emotion_for_course_inputs)
+Each course sentence maps to its expected dominant emotion. ... ok
+test_malformed_body_raises (test_emotion_detection.TestEmotionDetector.test_malformed_body_raises)
+A 200 response without emotionPredictions raises KeyError. ... ok
+test_output_keys_and_scores (test_emotion_detection.TestEmotionDetector.test_output_keys_and_scores)
+Result has exactly six keys and preserves original scores. ... ok
+test_request_payload (test_emotion_detection.TestEmotionDetector.test_request_payload)
+The text is sent in the documented raw_document payload. ... ok
+test_server_error_is_not_swallowed (test_emotion_detection.TestEmotionDetector.test_server_error_is_not_swallowed)
+HTTP 500 raises instead of being parsed as a prediction. ... ok
+test_status_400_returns_none (test_emotion_detection.TestEmotionDetector.test_status_400_returns_none)
+HTTP 400 yields None. ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.005s
+
+OK
