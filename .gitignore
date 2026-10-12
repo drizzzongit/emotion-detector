@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# local secrets / tooling
+.env
+*.log
+.venv/
+__pycache__/
